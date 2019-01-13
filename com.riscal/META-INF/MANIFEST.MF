@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Riscal
+Bundle-SymbolicName: com.riscal
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: com.riscal
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.eclipse.rap.rwt;bundle-version="[3.0.0,4.0.0)",
+ javax.servlet
+Service-Component: OSGI-INF/contribution.xml
+Import-Package: org.eclipse.rap.fileupload
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: lib/antlr4.jar,
+ .,
+ lib/org.eclipse.rap.filedialog-3.6.0.jar
