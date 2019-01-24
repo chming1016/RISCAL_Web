@@ -54,7 +54,7 @@ public class Main
 {
 
   // software version
-  public static final String version = "1.0.20 (Jan 12, 2019)";
+  public static final String version = "1.0.22 (Jan 24, 2019)";
 	  
   // message printed on startup
   public static final String copyright =

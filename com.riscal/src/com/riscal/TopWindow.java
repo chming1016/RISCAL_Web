@@ -9,6 +9,8 @@ import org.eclipse.rap.rwt.widgets.DialogCallback;
 import org.eclipse.rap.rwt.widgets.FileUpload;
 import org.eclipse.rap.fileupload.*;
 import org.eclipse.swt.*;
+import org.eclipse.swt.custom.ControlEditor;
+import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
@@ -183,6 +185,7 @@ public class TopWindow extends AbstractEntryPoint {
 	  // the button and menu entry for saving a file
 	  private MenuItem saveItem;
 	  private MenuItem saveAsItem;
+	  private MenuItem downloadItem;
 	  
 	  // the option selectors
 	  private Button silentOption;
@@ -604,7 +607,8 @@ public class TopWindow extends AbstractEntryPoint {
       Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
       fileTitle.setMenu(fileMenu);
       MenuItem newItem = new MenuItem(fileMenu, SWT.NULL);
-      newItem.setText("New (Ctrl+n)");
+      //newItem.setText("New (Ctrl+n)");
+      newItem.setText("New");
       //newItem.setImage(newImage);
       newItem.addSelectionListener(new SelectionAdapter() {
         public void widgetSelected(SelectionEvent e) {
@@ -612,13 +616,34 @@ public class TopWindow extends AbstractEntryPoint {
         }
       });
       newItem.setEnabled(true);
-      newItem.setAccelerator(SWT.CTRL+'n');
+      //newItem.setAccelerator(SWT.CTRL+'n');
       MenuItem openItem = new MenuItem(fileMenu, SWT.NULL);
       openItem.setText("Open... (Ctrl+o)");
       //openItem.setImage(openImage);
       openItem.addSelectionListener(new SelectionAdapter() {
         public void widgetSelected(SelectionEvent e) {
-          //openFile(Main.file);
+        	if (modified)
+            {
+      		  updateView(new Runnable() {
+      	          public void run() {
+      	            askCancelResult = askCancel("File Not Saved", "Save modified file?");
+      	          }});
+            } else {
+	              FileDialog fileDialog = new FileDialog( shell, SWT.APPLICATION_MODAL );
+	              fileDialog.setText( "Upload Files" );
+	              fileDialog.open(new DialogCallback() {
+	            	  public void dialogClosed( int returnCode ) {
+	            		  if(returnCode == 32 && fileDialog.getFileName()!= "") {
+	            			  //String url = startUploadReceiver();
+	        	              ServerPushSession pushSession = new ServerPushSession();
+	        	              pushSession.start();
+	        	              Main.getOutput().println("Stored file: " + fileDialog.getFileName());
+	        	              Main.file = new File(fileDialog.getFileName());
+	        	              openFile(Main.file);
+	            		  }
+	            	}
+	            } );
+            }
         }
       });
       openItem.setEnabled(true);
@@ -667,6 +692,21 @@ public class TopWindow extends AbstractEntryPoint {
       //quitItem.setAccelerator(SWT.CTRL+'q');
       //quitItem.setImage(quitImage);
       
+      downloadItem = new MenuItem(fileMenu, SWT.NULL);
+      downloadItem.setText("Download");
+      downloadItem.addSelectionListener(new SelectionAdapter() {
+        public void widgetSelected(SelectionEvent e) {
+        	try {
+    			byte[] fileContent = Files.readAllBytes(Main.file.toPath());
+    			sendDownload(fileContent, Main.file.getName());
+    		} catch (IOException e1) {
+    			// TODO Auto-generated catch block
+    			e1.printStackTrace();
+    		}
+        }
+      });
+      downloadItem.setEnabled(false);
+      
       // the edit menu
       MenuItem editTitle = new MenuItem(menu, SWT.CASCADE);
       editTitle.setText("Edit");
@@ -700,24 +740,26 @@ public class TopWindow extends AbstractEntryPoint {
       //redoItem.setImage(redoImage);
       //new MenuItem(editMenu, SWT.SEPARATOR);
       MenuItem biggerFontItem = new MenuItem(editMenu, SWT.NULL);
-      biggerFontItem.setText("Bigger Font (Ctrl+'+')");
+      //biggerFontItem.setText("Bigger Font (Ctrl+'+')");
+      biggerFontItem.setText("Bigger Font");
       biggerFontItem.addSelectionListener(new SelectionAdapter() {
         public void widgetSelected(SelectionEvent e) {
           setFonts(1);
         }
       });
       biggerFontItem.setEnabled(true);
-      biggerFontItem.setAccelerator(SWT.CTRL+'+');
+      //biggerFontItem.setAccelerator(SWT.CTRL+'+');
       //biggerFontItem.setImage(plusImage);
       MenuItem smallerFontItem = new MenuItem(editMenu, SWT.NULL);
-      smallerFontItem.setText("Smaller Font (Ctrl+'-')");
+      //smallerFontItem.setText("Smaller Font (Ctrl+'-')");
+      smallerFontItem.setText("Smaller Font");
       smallerFontItem.addSelectionListener(new SelectionAdapter() {
         public void widgetSelected(SelectionEvent e) {
           setFonts(-1);
         }
       });
       smallerFontItem.setEnabled(true);
-      smallerFontItem.setAccelerator(SWT.CTRL+'-');
+      //smallerFontItem.setAccelerator(SWT.CTRL+'-');
       //smallerFontItem.setImage(minusImage);
       
       // the help menu
@@ -732,6 +774,7 @@ public class TopWindow extends AbstractEntryPoint {
         public void widgetSelected(SelectionEvent e) {
         	//UrlLauncher launcher = RWT.getClient().getService( UrlLauncher.class );
         	//launcher.openURL( helpURL );
+          if (shell.isDisposed()) return;
           BrowserWindow b = BrowserWindow.construct(shell.getDisplay(), iconImage,
               "Help", 1000, 700);
           b.getBrowser().setUrl(helpURL);
@@ -746,6 +789,7 @@ public class TopWindow extends AbstractEntryPoint {
       aboutItem.setText("About RISCAL");
       aboutItem.addSelectionListener(new SelectionAdapter() {
         public void widgetSelected(SelectionEvent e) {
+          if (shell.isDisposed()) return;
           BrowserWindow b = BrowserWindow.construct(shell.getDisplay(), iconImage,
               "About", 600, 320);
           b.getBrowser().setText(aboutText);
@@ -1593,6 +1637,7 @@ public class TopWindow extends AbstractEntryPoint {
       saveItem.setEnabled(modified);
       //saveAsItem.setEnabled(modified);
       downloadButton.setEnabled(!modified);
+      downloadItem.setEnabled(!modified);
     }
     /****************************************************************************
      * Create the console area
@@ -1805,24 +1850,30 @@ public class TopWindow extends AbstractEntryPoint {
             String value = item.getText(1);
             if (key.isEmpty() || !Character.isAlphabetic(key.charAt(0))) 
             {
-              //top.consoleOutput().println("WARNING: invalid constant name '" + key + "' is ignored.");
+              Main.getOutput().println("WARNING: invalid constant name '" + key + "' is ignored.");
               continue;
             }
             if (map.containsKey(key))
             {
-              //top.consoleOutput().println("WARNING: duplicate value '" + value + 
-              //    "' for constant '" + key + "' is ignored.");
+              Main.getOutput().println("WARNING: duplicate value '" + value + 
+                  "' for constant '" + key + "' is ignored.");
               continue;
             }
 
             Integer ivalue = Main.toInteger(value);
             if (ivalue == null || ivalue < 0)
             {
-              //top.consoleOutput().println("WARNING: invalid value '" + value + 
-              //    "' for constant '" + key + "' is ignored.");
+              Main.getOutput().println("WARNING: invalid value '" + value + 
+                  "' for constant '" + key + "' is ignored.");
               continue;
             }
             map.put(key, ivalue);
+            
+            Map<String,Integer> map = getMap();
+            if (map == null) return;
+            Main.setValueMap(map);
+            optmodified = true;
+            Main.getOutput().println(getMap());
           }
           shell.close();
         }
@@ -1837,6 +1888,71 @@ public class TopWindow extends AbstractEntryPoint {
         }
       });
       cancel.setToolTipText("Drop Changes");
+      
+      final TableEditor editor = new TableEditor(table);
+      editor.horizontalAlignment = SWT.LEFT;
+      editor.grabHorizontal = true;
+      editor.minimumWidth = 50;
+      final int EDITABLECOLUMN = 0;
+      table.addSelectionListener(new SelectionAdapter() {
+        public void widgetSelected(SelectionEvent e) {
+          Control oldEditor = editor.getEditor();
+          if (oldEditor != null) oldEditor.dispose();
+          TableItem item = (TableItem)e.item;
+          if (item == null) return;
+          Text newEditor = new Text(table, SWT.NONE);
+          newEditor.setText(item.getText(EDITABLECOLUMN));
+          newEditor.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent e) {
+              Text text = (Text)editor.getEditor();
+              editor.getItem().setText(EDITABLECOLUMN, text.getText());
+            }
+          });
+          newEditor.addFocusListener(new FocusAdapter() 
+          {
+              public void focusLost(FocusEvent e)
+              {
+                if (shell.isDisposed()) return;
+                newEditor.setText(newEditor.getText());
+                newEditor.dispose();               
+              }
+            });
+          newEditor.selectAll();
+          newEditor.setFocus();
+          editor.setEditor(newEditor, item, EDITABLECOLUMN);
+          
+          newEditor.addTraverseListener(new TraverseListener(){
+              public void keyTraversed(TraverseEvent e) {
+                if (e.detail == SWT.TRAVERSE_TAB_NEXT) {
+                	newEditor.selectAll();
+                    newEditor.setFocus();
+                    editor.setEditor(newEditor, item, EDITABLECOLUMN);
+                	Text newEditor2 = new Text(table, SWT.NONE);
+                    newEditor2.setText(item.getText(1));
+                    newEditor2.addModifyListener(new ModifyListener() {
+                      public void modifyText(ModifyEvent e) {
+                        Text text = (Text)editor.getEditor();
+                        editor.getItem().setText(1, text.getText());
+                      }
+                    });
+                    
+                    newEditor2.addFocusListener(new FocusAdapter() 
+                    {
+                        public void focusLost(FocusEvent e)
+                        {
+                          if (shell.isDisposed()) return;
+                          newEditor2.setText(newEditor2.getText());
+                          newEditor2.dispose();
+                        }
+                      });
+                    newEditor2.selectAll();
+                    newEditor2.setFocus();
+                    editor.setEditor(newEditor2, item, 1);
+                }
+              }
+            });  
+        }
+      });
       
       // see example from TableEditor API documentation
       /*
@@ -1939,6 +2055,7 @@ public class TopWindow extends AbstractEntryPoint {
         }
       });
       */
+      
       shell.setSize(300, 300);
       openCentered(shell);
       /*
@@ -1949,10 +2066,10 @@ public class TopWindow extends AbstractEntryPoint {
       }
       */
 
-      Map<String,Integer> map = getMap();
-      if (map == null) return;
-      Main.setValueMap(map);
-      optmodified = true;
+      //Map<String,Integer> map = getMap();
+      //if (map == null) return;
+      //Main.setValueMap(map);
+      //optmodified = true;
     }
     public Map<String,Integer> getMap()
     {
@@ -1990,6 +2107,7 @@ public class TopWindow extends AbstractEntryPoint {
     {
       setEditor(null, true);
       downloadButton.setEnabled(false);
+      downloadItem.setEnabled(false);
       //Main.file = null;
     }
     
@@ -2401,6 +2519,7 @@ public class TopWindow extends AbstractEntryPoint {
       editGroup.setText("File: (Untitled)");
       saveButton.setEnabled(false);
       downloadButton.setEnabled(false);
+      downloadItem.setEnabled(false);
       Main.file = null;
       
     }
