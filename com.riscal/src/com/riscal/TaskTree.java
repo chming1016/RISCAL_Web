@@ -146,7 +146,8 @@ public class TaskTree
     {
       public void run() 
       {
-        boolean okay = MainSWT.execute(fun);
+    	//boolean okay = MainSWT.execute(fun); // bug, no idea
+    	boolean okay = top.execute(fun);
         top.updateView(new Runnable() {
           public void run() {
             tree.deselect(item);
@@ -192,13 +193,14 @@ public class TaskTree
         Task task = (Task)item.getData();
         SourcePosition pos = task.getSourcePosition();
         if (pos == null) pos = fun.ident.getPosition();
-        top.markText(pos, true);
-        for (SourcePosition pos0 : task.getAuxiliaryPositions())
-          top.markText(pos0, false);
+        //top.markText(pos, true);
+        //for (SourcePosition pos0 : task.getAuxiliaryPositions())
+          //top.markText(pos0, false);
       }
     });
     
     // set hover handler
+    /*
     tree.addMouseTrackListener(new MouseTrackAdapter() {
       public void mouseHover(MouseEvent e) {
         Tree tree = (Tree)e.widget;
@@ -210,6 +212,7 @@ public class TaskTree
         TaskTip.close();
       }
     });
+    */
   }
 
   /****************************************************************************
@@ -350,12 +353,14 @@ public class TaskTree
       label.setForeground(tcolor);
       
       // add listener
+      /*
       shell.addMouseTrackListener(new MouseTrackAdapter() { 
         public void mouseEnter(MouseEvent e)
         {
           close();
         }
       });
+      */
       
       // open window
       shell.pack();

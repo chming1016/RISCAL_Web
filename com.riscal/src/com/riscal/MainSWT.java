@@ -199,7 +199,7 @@ public class MainSWT
    ***************************************************************************/
   public static boolean execute(FunctionSymbol fun)
   {
-    return top.execute(fun);
+	return top.execute(fun);
   }
   
   /*************************************************************************

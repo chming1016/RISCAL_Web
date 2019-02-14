@@ -95,7 +95,7 @@ public class TopWindow extends AbstractEntryPoint {
 	  private Text console;
 	  
 	  // the tasks tree
-	  //private TaskTree taskTree;
+	  private TaskTree taskTree;
 	  
 	  // the font size for editor and console
 	  private int fontSize = 10;
@@ -385,7 +385,7 @@ public class TopWindow extends AbstractEntryPoint {
         createControlButtons();
         createControlOptions();
         createConsole();
-        //createTaskTree();
+        createTaskTree();
         
         // set fonts
         setFonts(0);
@@ -1402,14 +1402,14 @@ public class TopWindow extends AbstractEntryPoint {
     {
       if (funselected == -1)
       {
-        //taskTree.displayTasks(null, null);
+        taskTree.displayTasks(null, null);
         return;
       }
       FunctionSymbol fun = funs.get(funselected);
       TaskFolder folder = fun.getTaskFolder();
       TaskFolder root = new TaskFolder(null, "root", null);
       folder.setParent(root);
-      //taskTree.displayTasks(root, fun);
+      taskTree.displayTasks(root, fun);
       folder.setParent(null);
     }
     /***************************************************************************
@@ -1658,13 +1658,13 @@ public class TopWindow extends AbstractEntryPoint {
     /****************************************************************************
      * Create the task tree.
      ***************************************************************************/
-    /*
+    
     private void createTaskTree()
     {
       taskTree = new TaskTree(tasksGroup, this);
       taskTree.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
     }
-    */
+    
     /****************************************************************************
      * Open a file dialog.
      * @param mode the opening mode (SWT.OPEN or SWT.SAVE)
@@ -1873,7 +1873,7 @@ public class TopWindow extends AbstractEntryPoint {
             if (map == null) return;
             Main.setValueMap(map);
             optmodified = true;
-            Main.getOutput().println(getMap());
+            //Main.getOutput().println(getMap());
           }
           shell.close();
         }
@@ -2499,7 +2499,7 @@ public class TopWindow extends AbstractEntryPoint {
       Main.setDefaultValue(null);
       Main.setValueMap(new LinkedHashMap<String,Integer>());
       funs = null;
-      //methodMenu.setItems(new String[] {});
+      methodMenu.setItems(new String[] {});
       analyzeGroup.layout(true, true);
       Main.setFunctions(null);
       funselected = -1;
