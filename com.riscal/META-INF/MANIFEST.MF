@@ -11,5 +11,6 @@ Service-Component: OSGI-INF/contribution.xml
 Import-Package: org.eclipse.rap.fileupload
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: lib/antlr4.jar,
- .,
- lib/org.eclipse.rap.filedialog-3.6.0.jar
+ lib/org.eclipse.rap.filedialog-3.6.0.jar,
+ lib/icons.jar,
+ .

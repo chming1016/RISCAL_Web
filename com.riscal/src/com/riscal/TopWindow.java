@@ -49,7 +49,7 @@ public class TopWindow extends AbstractEntryPoint {
 		      "<html>\n" +
 		      "<body style=\"font-size:10pt;\">\n" +
 		      "<img align=right " +
-		      "src=\"http://www.risc.jku.at/about/welcome/_images/risc-logo-transparent.gif\"/>\n" +
+		      "src=\"http://www.risc.jku.at/about/welcome/_images/risc-logo-transparent.gif\"/>\n" + 
 		      "<h1>RISC Algorithm Language (RISCAL)</h1>\n" +
 		      "<b>Web Version " + Main.version + "</b><br>\n" +
 		      "For the latest version of this program and further information, see " +
@@ -103,7 +103,6 @@ public class TopWindow extends AbstractEntryPoint {
 	  
 	  // the names of the image files
 	  private static final String iconImageName = "risc-logo.png";
-	  /*
 	  private static final String newImageName = "document-new.png";
 	  private static final String openImageName = "document-open.png";
 	  // private static final String closeImageName = "emblem-unreadable.png";
@@ -128,11 +127,9 @@ public class TopWindow extends AbstractEntryPoint {
 	  private static final String tasksImageName = "folder.png";
 	  private static final String taskOpenImageName = "weather-overcast.png";
 	  private static final String taskClosedImageName = "weather-clear.png";
-	  */
 	  
 	  // the images themselves
 	  private static Image iconImage;
-	  /*
 	  private Image newImage;
 	  private Image openImage;
 	  // private Image closeImage;
@@ -157,7 +154,6 @@ public class TopWindow extends AbstractEntryPoint {
 	  private Image tasksImage;
 	  private Image taskOpenImage;
 	  private Image taskClosedImage;
-	  */
 	  
 	  // the console output
 	  private PrintWriter consoleOutput;
@@ -378,6 +374,7 @@ public class TopWindow extends AbstractEntryPoint {
 	    //WriteThread writeThread = new WriteThread();
 	    //writeThread.start();
 	    
+	    createImages();
         createMenu();
 	    createGroups();
         createEditButtons();
@@ -535,17 +532,14 @@ public class TopWindow extends AbstractEntryPoint {
      * @param the name of the image.
      * @return the image
      ***************************************************************************/
-    /*
     private Image getImage(String name)
     {
       return new Image(shell.getDisplay(), 
           Main.class.getResourceAsStream("/" + name));
     }
-    */
     /***************************************************************************
      * Create the images
      **************************************************************************/
-    /*
     private void createImages()
     {
       newImage = getImage(newImageName);
@@ -573,7 +567,6 @@ public class TopWindow extends AbstractEntryPoint {
       taskOpenImage = getImage(taskOpenImageName);
       taskClosedImage = getImage(taskClosedImageName);
     }
-    */
     /****************************************************************************
      * Create the content groups
      ***************************************************************************/
@@ -609,17 +602,17 @@ public class TopWindow extends AbstractEntryPoint {
       MenuItem newItem = new MenuItem(fileMenu, SWT.NULL);
       //newItem.setText("New (Ctrl+n)");
       newItem.setText("New");
-      //newItem.setImage(newImage);
+      newItem.setImage(newImage);
       newItem.addSelectionListener(new SelectionAdapter() {
         public void widgetSelected(SelectionEvent e) {
           newFile();
         }
       });
       newItem.setEnabled(true);
-      //newItem.setAccelerator(SWT.CTRL+'n');
+      newItem.setAccelerator(SWT.CTRL+'n');
       MenuItem openItem = new MenuItem(fileMenu, SWT.NULL);
       openItem.setText("Open... (Ctrl+o)");
-      //openItem.setImage(openImage);
+      openItem.setImage(openImage);
       openItem.addSelectionListener(new SelectionAdapter() {
         public void widgetSelected(SelectionEvent e) {
         	if (modified)
@@ -663,7 +656,7 @@ public class TopWindow extends AbstractEntryPoint {
       */
       saveItem = new MenuItem(fileMenu, SWT.NULL);
       saveItem.setText("Save (Ctrl+s)");
-      //saveItem.setImage(saveImage);
+      saveItem.setImage(saveImage);
       saveItem.addSelectionListener(new SelectionAdapter() {
         public void widgetSelected(SelectionEvent e) {
           saveFile(false);
@@ -749,7 +742,7 @@ public class TopWindow extends AbstractEntryPoint {
       });
       biggerFontItem.setEnabled(true);
       //biggerFontItem.setAccelerator(SWT.CTRL+'+');
-      //biggerFontItem.setImage(plusImage);
+      biggerFontItem.setImage(plusImage);
       MenuItem smallerFontItem = new MenuItem(editMenu, SWT.NULL);
       //smallerFontItem.setText("Smaller Font (Ctrl+'-')");
       smallerFontItem.setText("Smaller Font");
@@ -760,7 +753,7 @@ public class TopWindow extends AbstractEntryPoint {
       });
       smallerFontItem.setEnabled(true);
       //smallerFontItem.setAccelerator(SWT.CTRL+'-');
-      //smallerFontItem.setImage(minusImage);
+      smallerFontItem.setImage(minusImage);
       
       // the help menu
       MenuItem helpTitle = new MenuItem(menu, SWT.CASCADE);
@@ -779,11 +772,9 @@ public class TopWindow extends AbstractEntryPoint {
               "Help", 1000, 700);
           b.getBrowser().setUrl(helpURL);
           openCentered(b.getShell());
-          
         }
       });
-      
-      //helpItem.setImage(helpImage);
+      helpItem.setImage(helpImage);
       new MenuItem(helpMenu, SWT.SEPARATOR);
       MenuItem aboutItem = new MenuItem(helpMenu, SWT.NULL);
       aboutItem.setText("About RISCAL");
@@ -796,7 +787,7 @@ public class TopWindow extends AbstractEntryPoint {
           openCentered(b.getShell());
         }
       });
-      //aboutItem.setImage(aboutImage);
+      aboutItem.setImage(aboutImage);
     }
     
     /****************************************************************************
@@ -807,9 +798,10 @@ public class TopWindow extends AbstractEntryPoint {
       ToolBar editButtons = new ToolBar(editGroup, SWT.HORIZONTAL | SWT.FLAT);
 
       newButton = new ToolItem(editButtons, SWT.PUSH);
-      //newButton.setImage(newImage);
-      newButton.setText("New");
-      newButton.setToolTipText("New (Ctrl+n)");
+      newButton.setImage(newImage);
+      //newButton.setText("New");
+      //newButton.setToolTipText("New (Ctrl+n)");
+      newButton.setToolTipText("New");
       newButton.addSelectionListener(new SelectionAdapter() {
         public void widgetSelected(SelectionEvent e) {
           newFile();
@@ -818,8 +810,10 @@ public class TopWindow extends AbstractEntryPoint {
       newButton.setEnabled(true);
       
       openButton = new ToolItem(editButtons, SWT.PUSH);
-      openButton.setText("Open");
-      openButton.setToolTipText("Open (Ctrl+o)");
+      openButton.setImage(openImage);
+      //openButton.setText("Open");
+      //openButton.setToolTipText("Open (Ctrl+o)");
+      openButton.setToolTipText("Open");
       openButton.addSelectionListener(new SelectionAdapter() {
           public void widgetSelected(SelectionEvent e) {
         	  if (modified)
@@ -883,8 +877,8 @@ public class TopWindow extends AbstractEntryPoint {
       */
       
       saveButton = new ToolItem(editButtons, SWT.PUSH);
-      //saveButton.setImage(saveImage);
-      saveButton.setText("Save");
+      saveButton.setImage(saveImage);
+      //saveButton.setText("Save");
       saveButton.setToolTipText("Save (Ctrl+s)");
       saveButton.addSelectionListener(new SelectionAdapter() {
         public void widgetSelected(SelectionEvent e) {
@@ -931,17 +925,17 @@ public class TopWindow extends AbstractEntryPoint {
 
           @Override
           public void uploadFailed( FileUploadEvent event ) {
-            Main.getOutput().println( "upload failed: " + event.getException() );
+        	Main.getOutput().println( "upload failed: " + event.getException() );
           }
 
           @Override
           public void uploadFinished( FileUploadEvent event ) {
-            for( FileDetails file : event.getFileDetails() ) {
-            	Main.getOutput().println( "received: " + file.getFileName() + "\n");
-            	Main.file = receiver.getTargetFiles()[ fileSequence ];
-            	openFile(Main.file);
-            	fileSequence += 1;
-            }
+			for( FileDetails file : event.getFileDetails() ) {
+				Main.getOutput().println( "received: " + file.getFileName() + "\n");
+				Main.file = receiver.getTargetFiles()[ fileSequence ];
+				openFile(Main.file);
+				fileSequence += 1;
+			}
           }
         } );
         return uploadHandler.getUploadUrl();
@@ -955,8 +949,8 @@ public class TopWindow extends AbstractEntryPoint {
       ToolBar controlButtons = new ToolBar(controlGroup, SWT.HORIZONTAL | SWT.FLAT);
       
       checkButton = new ToolItem(controlButtons, SWT.PUSH);
-      //checkButton.setImage(checkImage);
-      checkButton.setText("Process Specification");
+      checkButton.setImage(checkImage);
+      //checkButton.setText("Process Specification");
       checkButton.setToolTipText("Process Specification");
       checkButton.addSelectionListener(new SelectionAdapter() {
         public void widgetSelected(SelectionEvent e) {
@@ -966,8 +960,8 @@ public class TopWindow extends AbstractEntryPoint {
       checkButton.setEnabled(true);
       
       startButton = new ToolItem(controlButtons, SWT.PUSH);
-      //startButton.setImage(startImage);
-      startButton.setText("Start Execution");
+      startButton.setImage(startImage);
+      //startButton.setText("Start Execution");
       startButton.setToolTipText("Start Execution");
       startButton.addSelectionListener(new SelectionAdapter() {
         public void widgetSelected(SelectionEvent e) {
@@ -977,8 +971,8 @@ public class TopWindow extends AbstractEntryPoint {
       startButton.setEnabled(true);
 
       stopButton = new ToolItem(controlButtons, SWT.PUSH);
-      //stopButton.setImage(stopImage);
-      stopButton.setText("Stop Execution");
+      stopButton.setImage(stopImage);
+      //stopButton.setText("Stop Execution");
       stopButton.setToolTipText("Stop Execution");
       stopButton.addSelectionListener(new SelectionAdapter() {
         public void widgetSelected(SelectionEvent e) {
@@ -990,8 +984,8 @@ public class TopWindow extends AbstractEntryPoint {
       new ToolItem(controlButtons, SWT.SEPARATOR);
       
       clearButton = new ToolItem(controlButtons, SWT.PUSH);
-      //clearButton.setImage(clearImage);
-      clearButton.setText("Clear Output");
+      clearButton.setImage(clearImage);
+      //clearButton.setText("Clear Output");
       clearButton.setToolTipText("Clear Output");
       clearButton.addSelectionListener(new SelectionAdapter() {
         public void widgetSelected(SelectionEvent e) {
@@ -1027,8 +1021,8 @@ public class TopWindow extends AbstractEntryPoint {
       new ToolItem(controlButtons, SWT.SEPARATOR);
       
       refreshButton = new ToolItem(controlButtons, SWT.PUSH);
-      //refreshButton.setImage(refreshImage);
-      refreshButton.setText("Reset System");
+      refreshButton.setImage(refreshImage);
+      //refreshButton.setText("Reset System");
       refreshButton.setToolTipText("Reset System");
       refreshButton.addSelectionListener(new SelectionAdapter() {
         public void widgetSelected(SelectionEvent e) {
@@ -1037,15 +1031,11 @@ public class TopWindow extends AbstractEntryPoint {
           if (!confirm)
           {
         	e.doit = false;
-            //Main.getOutput().println(confirm);
             return;
           }
-          //refresh();
-          //Main.getOutput().println(confirm);
         }
       });
-      refreshButton.setEnabled(true);
-      //refreshButton.setEnabled(false);
+      refreshButton.setEnabled(false);
       
     }
     /****************************************************************************
@@ -1111,8 +1101,8 @@ public class TopWindow extends AbstractEntryPoint {
       vs2label.setText("   Other Values:");
       
       valueButton = new Button(optionGroup, SWT.PUSH);
-      //valueButton.setImage(valueImage);
-      valueButton.setText("|||");
+      valueButton.setImage(valueImage);
+      //valueButton.setText("|||");
       valueButton.setLayoutData(new RowData(32,22));
       valueButton.setToolTipText("Specific Constants");
       valueButton.addSelectionListener(new SelectionAdapter() {
@@ -1154,8 +1144,8 @@ public class TopWindow extends AbstractEntryPoint {
       mlabel.setText("Operation:    ");
       
       tasksButton = new Button(option2Group, SWT.PUSH);
-      //tasksButton.setImage(tasksImage);
-      tasksButton.setText("Show/Hide Tasks");
+      tasksButton.setImage(tasksImage);
+      //tasksButton.setText("Show/Hide Tasks");
       tasksButton.setToolTipText("Show/Hide Tasks");
       tasksButton.addSelectionListener(new SelectionAdapter() {
         public void widgetSelected(SelectionEvent e) {
@@ -1386,7 +1376,7 @@ public class TopWindow extends AbstractEntryPoint {
     {
       tasks = !tasks;
       tasksGroup.setVisible(tasks);
-      //layout();
+      layout();
       /*
       Point size = shell.getSize();
       if (tasks)
@@ -1813,8 +1803,8 @@ public class TopWindow extends AbstractEntryPoint {
       tbuttons.setLayoutData(tbdata);
       tbuttons.setLayout(new RowLayout(SWT.VERTICAL));
       Button add = new Button(tbuttons, SWT.PUSH);
-      //add.setImage(s.plusImage());
-      add.setText("Add");
+      add.setImage(plusImage());
+      //add.setText("Add");
       add.setToolTipText("Add New Constant");
       add.addSelectionListener(new SelectionAdapter() {
         public void widgetSelected(SelectionEvent e) {
@@ -1823,8 +1813,8 @@ public class TopWindow extends AbstractEntryPoint {
         }
       });
       Button remove = new Button(tbuttons, SWT.PUSH);
-      //remove.setImage(s.minusImage());
-      remove.setText("Remove");
+      remove.setImage(minusImage());
+      //remove.setText("Remove");
       remove.addSelectionListener(new SelectionAdapter() {
         public void widgetSelected(SelectionEvent e) {
           int[] selected = table.getSelectionIndices();
@@ -2469,7 +2459,7 @@ public class TopWindow extends AbstractEntryPoint {
       methodMenu.setEnabled(enabled);
       startButton.setEnabled(enabled);
       clearButton.setEnabled(enabled);
-      //refreshButton.setEnabled(enabled);
+      refreshButton.setEnabled(enabled);
       checkButton.setEnabled(enabled);
       //recordButton.setEnabled(enabled && logStream == null);
       //stoprecordButton.setEnabled(enabled && logStream != null);
@@ -2839,9 +2829,9 @@ public class TopWindow extends AbstractEntryPoint {
      * Get various images.
      * @return the image.
      **************************************************************************/
-    //public Image iconImage() { return iconImage; }
-    //public Image plusImage() { return plusImage; }
-    //public Image minusImage() { return minusImage; }
+    public Image iconImage() { return iconImage; }
+    public Image plusImage() { return plusImage; }
+    public Image minusImage() { return minusImage; }
     
     /****************************************************************************
      * Get progress bar
