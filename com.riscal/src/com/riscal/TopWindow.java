@@ -1886,13 +1886,11 @@ public class TopWindow extends AbstractEntryPoint {
               continue;
             }
             map.put(key, ivalue);
-            
-            Map<String,Integer> map = getMap();
-            if (map == null) return;
-            Main.setValueMap(map);
-            optmodified = true;
-            //Main.getOutput().println(getMap());
           }
+          Map<String,Integer> map = getMap();
+          if (map == null) return;
+          Main.setValueMap(map);
+          optmodified = true;
           shell.close();
         }
       });
