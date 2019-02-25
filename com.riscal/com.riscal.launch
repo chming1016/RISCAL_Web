@@ -23,7 +23,7 @@
 <stringAttribute key="org.eclipse.rap.launch.dataLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.rap.tools.launch/com.riscal"/>
 <booleanAttribute key="org.eclipse.rap.launch.developmentMode" value="true"/>
 <booleanAttribute key="org.eclipse.rap.launch.openBrowser" value="true"/>
-<intAttribute key="org.eclipse.rap.launch.port" value="8999"/>
+<intAttribute key="org.eclipse.rap.launch.port" value="9000"/>
 <stringAttribute key="org.eclipse.rap.launch.servletPath" value="/riscal"/>
 <intAttribute key="org.eclipse.rap.launch.sessionTimeout" value="0"/>
 <booleanAttribute key="org.eclipse.rap.launch.terminatePrevious" value="true"/>

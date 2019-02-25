@@ -396,6 +396,7 @@ public class TopWindow extends AbstractEntryPoint {
         Main.setInputOutput(null, consoleOutput);
         Main.mainInit();
         Main.mainCore();
+        refresh();
         if (Main.path != null) openFile(new File(Main.path));
         
         // open window
@@ -605,7 +606,15 @@ public class TopWindow extends AbstractEntryPoint {
       newItem.setImage(newImage);
       newItem.addSelectionListener(new SelectionAdapter() {
         public void widgetSelected(SelectionEvent e) {
-          newFile();
+        	if (modified)
+            {
+      		  updateView(new Runnable() {
+      	          public void run() {
+      	            askCancelResult = askCancel("File Not Saved", "Save modified file?");
+      	          }});
+            } else {
+            	newFile();
+            }
         }
       });
       newItem.setEnabled(true);
@@ -804,7 +813,15 @@ public class TopWindow extends AbstractEntryPoint {
       newButton.setToolTipText("New");
       newButton.addSelectionListener(new SelectionAdapter() {
         public void widgetSelected(SelectionEvent e) {
-          newFile();
+        	if (modified)
+            {
+      		  updateView(new Runnable() {
+      	          public void run() {
+      	            askCancelResult = askCancel("File Not Saved", "Save modified file?");
+      	          }});
+            } else {
+            	newFile();
+            }
         }
       });
       newButton.setEnabled(true);
@@ -1062,6 +1079,7 @@ public class TopWindow extends AbstractEntryPoint {
           optmodified = true;
           nondetselected = nondetOption.getSelection();
           Main.setNondeterministic(nondetselected);
+          Main.writePreferences();
         }
       });
       
@@ -1085,6 +1103,7 @@ public class TopWindow extends AbstractEntryPoint {
             vsizeField.setText("0");
           }
           Main.setDefaultValue(vsize0);
+          Main.writePreferences();
         }
       });
       vsizeField.addVerifyListener(new VerifyListener() {
@@ -1108,6 +1127,7 @@ public class TopWindow extends AbstractEntryPoint {
       valueButton.addSelectionListener(new SelectionAdapter() {
         public void widgetSelected(SelectionEvent e) {
           valueDialog();
+          Main.writePreferences();
         }
       });
       
@@ -1150,6 +1170,7 @@ public class TopWindow extends AbstractEntryPoint {
       tasksButton.addSelectionListener(new SelectionAdapter() {
         public void widgetSelected(SelectionEvent e) {
           toggleTasks();
+          Main.writePreferences();
         }
       });
       tasksButton.setEnabled(true);
@@ -1172,6 +1193,7 @@ public class TopWindow extends AbstractEntryPoint {
         public void widgetSelected(SelectionEvent e) {
           funselected = methodMenu.getSelectionIndex();
           Main.setSelectedFunction(funselected);
+          Main.writePreferences();
           showSelectedFunction();
           displayTasks();
         }
@@ -1192,6 +1214,7 @@ public class TopWindow extends AbstractEntryPoint {
           // optmodified = true;
           silentselected = silentOption.getSelection();
           Main.setSilent(silentselected);
+          Main.writePreferences();
         }
       });
       
@@ -1225,10 +1248,11 @@ public class TopWindow extends AbstractEntryPoint {
       cnumText = cnumField.getText();
       cnumField.addModifyListener(new ModifyListener() {
         public void modifyText(ModifyEvent e) {
-          cnumText = cnumField.getText();         
+          cnumText = cnumField.getText(); 
           Long cnum0 = Main.toLong(cnumText);
-          if (cnum0 == null) cnumField.setText("");
+          //if (cnum0 == null) cnumField.setText("");
           Main.setCheckNumber(cnum0);
+          Main.writePreferences();
         }
       });
       cnumField.addVerifyListener(new VerifyListener() {
@@ -1253,8 +1277,9 @@ public class TopWindow extends AbstractEntryPoint {
         public void modifyText(ModifyEvent e) {
           cpercText = cpercField.getText();         
           Long cperc0 = Main.toLong(cpercText);
-          if (cperc0 == null) cpercField.setText("");
+          //if (cperc0 == null) cpercField.setText("");
           Main.setCheckPercentage(cperc0);
+          Main.writePreferences();
         }
       });
       cpercField.addVerifyListener(new VerifyListener() {
@@ -1277,10 +1302,11 @@ public class TopWindow extends AbstractEntryPoint {
       crunText = crunField.getText();
       crunField.addModifyListener(new ModifyListener() {
         public void modifyText(ModifyEvent e) {
-          crunText = crunField.getText();         
-          Long crun0 = Main.toLong(crunText);
-          if (crun0 == null) crunField.setText("");
+          crunText = crunField.getText();
+    	  Long crun0 = Main.toLong(crunText);
+    	  //if (crun0 == null) crunField.setText("");
           Main.setCheckRuns(crun0);
+          Main.writePreferences();
         }
       });
       crunField.addVerifyListener(new VerifyListener() {
@@ -1305,6 +1331,7 @@ public class TopWindow extends AbstractEntryPoint {
         public void widgetSelected(SelectionEvent e) {
           threadselected = threadOption.getSelection();
           Main.setMultiThreaded(threadselected);
+          Main.writePreferences();
         }
       });
       
@@ -1321,8 +1348,9 @@ public class TopWindow extends AbstractEntryPoint {
         public void modifyText(ModifyEvent e) {
           threadText = threadField.getText();         
           Integer threads0 = Main.toInteger(threadText);
-          if (threads0 == null) threadField.setText("");
+          //if (threads0 == null) threadField.setText("");
           Main.setThreads(threads0);
+          Main.writePreferences();
         }
       });
       threadField.addVerifyListener(new VerifyListener() {
@@ -1734,7 +1762,7 @@ public class TopWindow extends AbstractEntryPoint {
     			  saveFile(false);
     			  getAskCancelResult = 1;
     		  }
-    		  if(returnCode == SWT.NO) {
+    		  else if(returnCode == SWT.NO) {
     			  getAskCancelResult = 0;
     		  }
     	  }
@@ -1925,7 +1953,7 @@ public class TopWindow extends AbstractEntryPoint {
                         editor.getItem().setText(1, text.getText());
                       }
                     });
-                    
+
                     newEditor2.addFocusListener(new FocusAdapter() 
                     {
                         public void focusLost(FocusEvent e)
@@ -2487,6 +2515,13 @@ public class TopWindow extends AbstractEntryPoint {
       Main.setNondeterministic(false);
       vsizeField.setText("0");
       Main.setDefaultValue(null);
+      Main.setCheckNumber(Main.toLong(cnumField.getText()));
+      Main.setCheckPercentage(Main.toLong(cpercField.getText()));
+      Main.setCheckRuns(Main.toLong(crunField.getText()));
+      Main.setMultiThreaded(false);
+      Main.setSilent(false);
+      threadOption.setSelection(false);
+      Main.setThreads(Main.toInteger(threadField.getText()));
       Main.setValueMap(new LinkedHashMap<String,Integer>());
       funs = null;
       methodMenu.setItems(new String[] {});
@@ -2505,13 +2540,15 @@ public class TopWindow extends AbstractEntryPoint {
       // mtext = null;
       Main.terminateServers();
       console.setText(Main.copyright + "\n");
+      
+      taskTree.displayTasks(null, null);
 
       editGroup.setText("File: (Untitled)");
       saveButton.setEnabled(false);
       downloadButton.setEnabled(false);
       downloadItem.setEnabled(false);
       Main.file = null;
-      
+      Main.writePreferences();
     }
     
     /***************************************************************************
