@@ -13,7 +13,7 @@ public class MainWeb implements ApplicationConfiguration {
     public void configure(Application application) {
         Map<String, String> properties = new HashMap<String, String>();
         properties.put(WebClient.PAGE_TITLE, "RISCAL");
-        application.addEntryPoint("/riscal", TopWindow.class, properties);
+        application.addEntryPoint("/", TopWindow.class, properties);
     }
 
 }
