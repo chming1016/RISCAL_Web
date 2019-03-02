@@ -4,7 +4,6 @@
 <product uid="riscal" useFeatures="false" includeLaunchers="false">
    <plugins>
       <plugin id="com.riscal"/>
-      <plugin id="javax.servlet"/>
       <plugin id="org.apache.commons.fileupload"/>
       <plugin id="org.apache.commons.io"/>
       <plugin id="org.apache.felix.gogo.command"/>
@@ -27,7 +26,6 @@
 
    <configurations>
       <plugin id="com.riscal" autoStart="true" startLevel="0" />
-      <plugin id="javax.servlet" autoStart="true" startLevel="0" />
       <plugin id="org.apache.commons.fileupload" autoStart="true" startLevel="0" />
       <plugin id="org.apache.commons.io" autoStart="true" startLevel="0" />
       <plugin id="org.apache.felix.gogo.command" autoStart="true" startLevel="0" />
