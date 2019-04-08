@@ -358,10 +358,12 @@ public class TopWindow extends AbstractEntryPoint {
       shell.open();
     }
     */
-    
+	/****************************************************************************
+	* Create the main window.
+	* @param parent the composite to be used.
+	***************************************************************************/
 	@Override
     public void createContents(Composite parent) {
-        //parent.setLayout(new GridLayout(GridData.FILL_BOTH, false));
 		shell = parent.getShell();
 		
 		iconImage = new Image(shell.getDisplay(), Main.class.getResourceAsStream("/" + iconImageName));
@@ -369,10 +371,6 @@ public class TopWindow extends AbstractEntryPoint {
 		
 		// give the GUI thread maximum priority
 	    Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
-	    
-	    // make sure preferences are regularly written
-	    //WriteThread writeThread = new WriteThread();
-	    //writeThread.start();
 	    
 	    createImages();
         createMenu();
@@ -391,7 +389,7 @@ public class TopWindow extends AbstractEntryPoint {
         //setWeights(new int[] {W1,W2,W3});
         layout();
         
-        // set the iput/output interface
+        // set the input/output interface
         Main.init();
         Main.setInputOutput(null, consoleOutput);
         Main.mainInit();
@@ -399,34 +397,10 @@ public class TopWindow extends AbstractEntryPoint {
         refresh();
         if (Main.path != null) openFile(new File(Main.path));
         
-        // open window
-        //shell.open();
-        
-	    // process events
-        /*
-	    try
-	    {
-	      while (!shell.getDisplay().isDisposed())
-	      {
-	        if (shell.getDisplay().readAndDispatch())
-	        	System.out.println("Display Sleep\n");
-	        	//shell.getDisplay().sleep();
-	      }
-	      writeThread.stopped = true;
-	    }
-	    catch(SWTException e)
-	    {
-	      System.out.println(e.getMessage());
-	    }
-	    */
-        
         // Exit Confirmation
 	    ExitConfirmation exitConfirmService = RWT.getClient().getService( ExitConfirmation.class );
 	    exitConfirmService.setMessage( "Do you really wanna leave RISCAL?" );
     }
-	private void test() {
-		editGroup.setSize(shell.getSize().x/3, shell.getSize().y);
-	}
     /***************************************************************************
      * Set the shell layout
      **************************************************************************/
@@ -871,6 +845,7 @@ public class TopWindow extends AbstractEntryPoint {
       closeButton.setEnabled(true);
       */
 
+      // another method for creating file upload
       /*
       FileUpload fileUpload = new FileUpload( editGroup, SWT.NONE );
       fileUpload.setText( "Open" );
@@ -920,7 +895,9 @@ public class TopWindow extends AbstractEntryPoint {
       downloadButton.setEnabled(false);
       
     }
-    
+    /****************************************************************************
+     * Download Service Handler
+     ***************************************************************************/
     public boolean sendDownload(byte[] data, String filename) {
         DownloadService service = new DownloadService(data, filename);
         service.register();
@@ -929,8 +906,10 @@ public class TopWindow extends AbstractEntryPoint {
         launcher.openURL(service.getURL());
         return true;
     }
-    
-    private String startUploadReceiver() {
+    /****************************************************************************
+     * another method for handling file upload
+     ***************************************************************************/    
+/*    private String startUploadReceiver() {
         DiskFileUploadReceiver receiver = new DiskFileUploadReceiver();
         FileUploadHandler uploadHandler = new FileUploadHandler( receiver );
         uploadHandler.addUploadListener( new FileUploadListener() {
@@ -957,7 +936,7 @@ public class TopWindow extends AbstractEntryPoint {
         } );
         return uploadHandler.getUploadUrl();
       }
-      
+*/      
     /****************************************************************************
      * Create the control buttons
      ***************************************************************************/
@@ -2242,7 +2221,6 @@ public class TopWindow extends AbstractEntryPoint {
      ***************************************************************************/
     public void startExecution(boolean changeable, Runnable runnable)
     {
-      //Main.getOutput().println("Start Execution");
       MainSWT.execute(new Runnable()
       {
         public void run() 
@@ -2250,7 +2228,6 @@ public class TopWindow extends AbstractEntryPoint {
           boolean change = updateModel();
           if (!change || changeable) runnable.run();
           MainSWT.terminate();
-          //Main.getOutput().println("End Execution");
         }
         private int answer;
         public boolean updateModel()
@@ -2293,7 +2270,6 @@ public class TopWindow extends AbstractEntryPoint {
      ***************************************************************************/
     private void startAnalysis()
     {
-      //Main.getOutput().println("Start Analysis");
       startExecution(true, new Runnable()
       {
         public void run() 
@@ -2445,14 +2421,12 @@ public class TopWindow extends AbstractEntryPoint {
             //setCursor(waitCursor);
             //editor.getTextWidget().setCursor(waitCursor);
             //console.setCursor(waitCursor);
-        	//Main.getOutput().println("Start Execution\n");
           }
           else
           {
             //setCursor(arrowCursor);
             //editor.getTextWidget().setCursor(arrowCursor);
             //console.setCursor(arrowCursor);
-        	//Main.getOutput().println("\nStop Execution\n");
           }
         }});
     }
