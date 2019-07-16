@@ -3,6 +3,7 @@
 This project is cooperated with The Research Institute for Symbolic Computation (RISC) at Johannes Kepler Universität Linz (JKU Linz).
 
 Developing Tools: Eclipse Remote Application Platform (RAP)
+
 Thesis Publication is located in the Documentation directory.
 
 Pre-built VM images can be downloaded here:
